@@ -1,28 +1,12 @@
 package com.chernyshov777;
 
-import java.util.Deque;
 import java.util.Iterator;
+import java.util.Queue;
 
 public abstract class AbstractEventsCounterService implements EventsCounter {
-    protected Deque<Long> eventsCountWithinLastMinute;
-    protected Deque<Long> eventsCountWithinLastHour;
-    protected Deque<Long> eventsCountWithinLastDay;
-
-    protected final static long ONE_MINUTE_IN_MILLISECONDS = 60 * 1000;
-    protected final static long ONE_HOUR_IN_MILLISECONDS = 60 * ONE_MINUTE_IN_MILLISECONDS;
-    protected final static long ONE_DAY_IN_MILLISECONDS = 24 * ONE_HOUR_IN_MILLISECONDS;
-
-
-    @Override
-    public void addEvent(Long timeInMilliseconds) {
-        Long lastAddedTime = eventsCountWithinLastDay.peekLast();
-        if (lastAddedTime != null && timeInMilliseconds - lastAddedTime < 0) {
-            throw new IllegalArgumentException("The new event time should be greater than existing one's");
-        }
-        eventsCountWithinLastMinute.add(timeInMilliseconds);
-        eventsCountWithinLastHour.add(timeInMilliseconds);
-        eventsCountWithinLastDay.add(timeInMilliseconds);
-    }
+    protected Queue<Long> eventsCountWithinLastMinute;
+    protected Queue<Long> eventsCountWithinLastHour;
+    protected Queue<Long> eventsCountWithinLastDay;
 
     @Override
     public long getEventsCountWithinLastMinute() {
@@ -56,7 +40,7 @@ public abstract class AbstractEventsCounterService implements EventsCounter {
      * @param dequeToUpdate     deque which elements will be removed
      * @param timeDifference    time difference which is used in condition for remove
      */
-    private void deleteOldElementsFromDeque(Deque<Long> dequeToUpdate, long timeDifference) {
+    protected void deleteOldElementsFromDeque(Queue<Long> dequeToUpdate, long timeDifference) {
         long currentTime = System.currentTimeMillis();
         Iterator<Long> iterator = dequeToUpdate.iterator();
         while (iterator.hasNext()) {

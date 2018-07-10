@@ -1,15 +1,26 @@
 package com.chernyshov777;
 
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingDeque;
 
 public class BlockingEventsCounterService extends AbstractEventsCounterService {
-    private final static long ONE_MINUTE_IN_MILLISECONDS = 60 * 1000;
-    private final static long ONE_HOUR_IN_MILLISECONDS = 60 * ONE_MINUTE_IN_MILLISECONDS;
-    private final static long ONE_DAY_IN_MILLISECONDS = 24 * ONE_HOUR_IN_MILLISECONDS;
 
     public BlockingEventsCounterService() {
-        eventsCountWithinLastMinute = new ConcurrentLinkedDeque<>();
-        eventsCountWithinLastHour = new ConcurrentLinkedDeque<>();
-        eventsCountWithinLastDay = new ConcurrentLinkedDeque<>();
+        eventsCountWithinLastMinute = new LinkedBlockingDeque<>();
+        eventsCountWithinLastHour = new LinkedBlockingDeque<>();
+        eventsCountWithinLastDay = new LinkedBlockingDeque<>();
+    }
+
+    @Override
+    public void addEvent(Long timeInMilliseconds) {
+        eventsCountWithinLastMinute.add(timeInMilliseconds);
+        eventsCountWithinLastHour.add(timeInMilliseconds);
+        eventsCountWithinLastDay.add(timeInMilliseconds);
+    }
+
+    @Override
+    protected void deleteOldElementsFromDeque(Queue<Long> dequeToUpdate, long timeDifference) {
+        long currentTime = System.currentTimeMillis();
+        dequeToUpdate.removeIf(a -> currentTime - a > timeDifference);
     }
 }

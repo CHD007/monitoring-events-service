@@ -1,11 +1,15 @@
 package com.chernyshov777;
 
 /**
- * Implementations of this interface should provide service to count events numbers.
+ * Implementations of this interface provides service to count events numbers.
  * Service provide method for adding events and methods to retrieve events count
  * within last minute, hour and day.
  */
 public interface EventsCounter {
+    long ONE_MINUTE_IN_MILLISECONDS = 60 * 1000;
+    long ONE_HOUR_IN_MILLISECONDS = 60 * ONE_MINUTE_IN_MILLISECONDS;
+    long ONE_DAY_IN_MILLISECONDS = 24 * ONE_HOUR_IN_MILLISECONDS;
+
     /**
      * Add event to counter
      *
